@@ -1,0 +1,21 @@
+{
+    "type": "oracle",
+    "host": "localhost",
+    "username": "user",
+    "password": "pass",
+    "connectString": "localhost/orcl",
+    "port": 1521,
+    "synchronize": true,
+    "logging": false,
+    "entities": [
+       "src/entity/**/*.ts"
+    ],
+    "migrations": [
+       "src/migration/**/*.ts"
+    ],
+    "cli": {
+       "entitiesDir": "src/entity",
+       "migrationsDir": "src/migration",
+       "subscribersDir": "src/subscriber"
+    }
+ }
