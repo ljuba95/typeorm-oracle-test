@@ -1,4 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
+import { Sektor } from "./Sektor";
 
 @Entity()
 export class Radnik {
@@ -7,12 +8,17 @@ export class Radnik {
     id: number;
 
     @Column()
-    firstName: string;
+    imePrezime: string;
 
     @Column()
-    lastName: string;
+    datumRodjenja: Date;
 
     @Column()
-    age: number;
+    pol: string;
+
+    //moze i {lazy: true} onda je radnik.sektor promise
+    //ako se ne stavi nista, mora u find-u za radnike da se stavi {relations: ["sektor"]}
+    @ManyToOne(type => Sektor, sektor => sektor.radnici, {eager: true})
+    sektor: Sektor;
 
 }

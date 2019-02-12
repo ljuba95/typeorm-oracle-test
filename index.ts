@@ -3,33 +3,22 @@ import {createConnection, getRepository} from "typeorm";
 import express from "express";
 import * as bodyParser from "body-parser";
 import { Radnik } from "./src/entity/Radnik";
-
+import { Sektor } from "./src/entity/Sektor";
+import RadnikRoutes from "./src/routes/RadnikRoutes";
+import cors from 'cors';
 
 createConnection().then(async connection => {
 
     // create express app
     const app = express();
+    // set middlewares
     app.use(bodyParser.json());
+    app.use(cors());
 
-    // setup express app here
-    // ...
+    // add routers
+    app.use("/radnik", RadnikRoutes);
 
     // start express server
-    app.listen(3000);
+    app.listen(3000, () => console.log("Listening on 3000..."));
 
-    // test
-    await connection.manager.save(connection.manager.create(Radnik, {
-        firstName: "Pera",
-        lastName: "Peric",
-        age: 27
-    }));
-    await connection.manager.save(connection.manager.create(Radnik, {
-        firstName: "Mika",
-        lastName: "Mikic",
-        age: 24
-    }));
-
-    const repos = getRepository(Radnik);
-    const radnici = await repos.find();
-    console.log(radnici);
 }).catch(error => console.log(error));
