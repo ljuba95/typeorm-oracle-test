@@ -2,8 +2,6 @@ import "reflect-metadata";
 import {createConnection, getRepository} from "typeorm";
 import express from "express";
 import * as bodyParser from "body-parser";
-import { Radnik } from "./src/entity/Radnik";
-import { Sektor } from "./src/entity/Sektor";
 import RadnikRoutes from "./src/routes/RadnikRoutes";
 import cors from 'cors';
 

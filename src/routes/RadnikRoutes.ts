@@ -52,8 +52,8 @@ router.post("/", async (req: Request, res: Response) => {
             res.json({error: `Sektor id ${req.body.sektor} ne postoji.`});
             return;
         }
-        await getRepository(Radnik).insert({...req.body, sektor});
-        res.sendStatus(201); //201 Created
+        let result = await getRepository(Radnik).insert({...req.body, sektor});
+        res.json(await getRepository(Radnik).findOne(result.identifiers[0].id));
     } catch(e) {
         res.json({error: e.message});
     }
