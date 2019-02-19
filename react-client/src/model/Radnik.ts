@@ -11,9 +11,9 @@ export class Radnik {
 
     pol: string;
 
-    sektor: Sektor;
+    sektor: number;
 
-    constructor(id: number, imePrezime: string, datumRodjenja: string, pol: string, sektor: Sektor) {
+    constructor(id: number, imePrezime: string, datumRodjenja: string, pol: string, sektor: number) {
         this.id = id;
         this.imePrezime = imePrezime;
         this.datumRodjenja = datumRodjenja;

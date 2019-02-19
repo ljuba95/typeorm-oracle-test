@@ -62,6 +62,11 @@ router.post("/", async (req: Request, res: Response) => {
 //update one
 router.patch("/:id", async (req: Request, res: Response) => {
     try{
+        let sektor = await getRepository(Sektor).findOne(req.body.sektor);
+        if(!sektor) {
+            res.json({error: `Sektor id ${req.body.sektor} ne postoji.`});
+            return;
+        }
         await getRepository(Radnik).update(req.params.id, req.body);
         let radnik = await getRepository(Radnik).findOne(req.params.id)
         if(radnik){
