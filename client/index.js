@@ -1,7 +1,10 @@
 $(document).ready(() => {
     let zaposleni = [];
+    let sektori = [];
     let selectedRowId;
     const baseUrl = "http://localhost:3000";
+
+    //TODO: Dodaj ucitavanje svih sektora.
 
     function tableRowMarkup(radnik) {
         return `<tr data-id="${radnik.id}" class="table-row">
@@ -35,6 +38,22 @@ $(document).ready(() => {
 
             $("#table-body").html(zaposleni.map(tableRowMarkup).join(''));
             emptyFields();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function getSektoriSelectMarkup(sektori) {
+        return `<option selected value="0">Izaberite sektor...</option>
+                ${sektori.map(sektor => `<option value="${sektor.id}">${sektor.naziv}</option>`).join('')}`
+    }
+
+    async function popuniSektore() {
+        try {
+            let res = await fetch(baseUrl + "/sektor");
+            sektori = await res.json();
+
+            $("#sektor-select").html(getSektoriSelectMarkup(sektori));
         } catch (e) {
             console.log(e);
         }
@@ -99,20 +118,20 @@ $(document).ready(() => {
         let pol = $("#pol-select").val();
         let sektor = $("#sektor-select").val();
         let datumRodjenja = $("#datumRodjenja").val();
-        try{
+        try {
             let res = await fetch(baseUrl + "/radnik", {
                 method: 'POST',
-                body: JSON.stringify({imePrezime, pol, datumRodjenja, sektor}),
+                body: JSON.stringify({ imePrezime, pol, datumRodjenja, sektor }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             let insertedRadnik = await res.json();
-            if(!insertedRadnik.error){
+            if (!insertedRadnik.error) {
                 zaposleni.push(insertedRadnik);
                 insertNewRow(insertedRadnik);
             }
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
     });
@@ -120,26 +139,26 @@ $(document).ready(() => {
     //izmeni
     $('#btn-update').click(async function (e) {
         e.preventDefault();
-        if(!selectedRowId) return;
+        if (!selectedRowId) return;
         let imePrezime = $("#imePrezime").val();
         let pol = $("#pol-select").val();
         let sektor = $("#sektor-select").val();
         let datumRodjenja = $("#datumRodjenja").val();
-        try{
+        try {
             let res = await fetch(baseUrl + `/radnik/${selectedRowId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({imePrezime, pol, datumRodjenja, sektor}),
+                body: JSON.stringify({ imePrezime, pol, datumRodjenja, sektor }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             let updatedRadnik = await res.json();
-            if(!updatedRadnik.error){
+            if (!updatedRadnik.error) {
                 zaposleni = zaposleni.map(zap => zap.id === updatedRadnik.id ? updatedRadnik : zap);
                 console.log(zaposleni);
                 updateRow(updatedRadnik);
             }
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
 
@@ -148,9 +167,9 @@ $(document).ready(() => {
     //obrisi
     $('#btn-delete').click(async function (e) {
         e.preventDefault();
-        if(!selectedRowId) return;
+        if (!selectedRowId) return;
 
-        try{
+        try {
             let res = await fetch(baseUrl + `/radnik/${selectedRowId}`, {
                 method: 'DELETE'
             });
@@ -159,7 +178,7 @@ $(document).ready(() => {
             selectedRowId = null;
             disableButtons();
             emptyFields();
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
     });
@@ -170,5 +189,5 @@ $(document).ready(() => {
     });
 
     osveziTabelu();
-
+    popuniSektore();
 });

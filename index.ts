@@ -3,6 +3,7 @@ import {createConnection, getRepository} from "typeorm";
 import express from "express";
 import * as bodyParser from "body-parser";
 import RadnikRoutes from "./src/routes/RadnikRoutes";
+import SektorRoutes from "./src/routes/SektorRoutes";
 import cors from 'cors';
 
 createConnection().then(async connection => {
@@ -15,7 +16,8 @@ createConnection().then(async connection => {
 
     // add routers
     app.use("/radnik", RadnikRoutes);
-
+    app.use("/sektor", SektorRoutes);
+    
     // start express server
     app.listen(3000, () => console.log("Listening on 3000..."));
 
