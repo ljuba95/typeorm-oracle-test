@@ -2,9 +2,7 @@ $(document).ready(() => {
     let zaposleni = [];
     let sektori = [];
     let selectedRowId;
-    const baseUrl = "http://localhost:3000";
-
-    //TODO: Dodaj ucitavanje svih sektora.
+    const baseUrl = "http://localhost:8080/FpisAplikacijaWS";
 
     function tableRowMarkup(radnik) {
         return `<tr data-id="${radnik.id}" class="table-row">
@@ -62,13 +60,6 @@ $(document).ready(() => {
     function getFormattedDatumRodjenja(datum) {
         return datum.split('T')[0];
     }
-
-    $('#btn-refresh').click(async function () {
-        $(this).html('Loading..');
-        await osveziTabelu();
-        // $(this).html('<i class="fa fa-refresh"></i> Osvezi tabelu');
-        setTimeout(() => $(this).html('<i class="fa fa-refresh"></i> Osvezi tabelu'), 500);
-    });
 
     function disableButtons() {
         $('#btn-update').prop('disabled', true);
@@ -146,7 +137,7 @@ $(document).ready(() => {
         let datumRodjenja = $("#datumRodjenja").val();
         try {
             let res = await fetch(baseUrl + `/radnik/${selectedRowId}`, {
-                method: 'PATCH',
+                method: 'PUT',
                 body: JSON.stringify({ imePrezime, pol, datumRodjenja, sektor }),
                 headers: {
                     'Content-Type': 'application/json'

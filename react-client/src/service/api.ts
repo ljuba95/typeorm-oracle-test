@@ -1,6 +1,6 @@
 import { Radnik } from "../model/Radnik";
 
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://localhost:8080/FpisAplikacijaWS";
 
 export async function getAllZaposleni() {
     let res = await fetch(baseUrl + "/radnik");
@@ -28,7 +28,7 @@ export async function addZaposleni(zaposleni: Radnik) {
 export async function updateZaposleni(zaposleni: Radnik) {
     let { id, ...zap } = zaposleni;
     let res = await fetch(baseUrl + `/radnik/${id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         body: JSON.stringify(zap),
         headers: {
             'Content-Type': 'application/json'
