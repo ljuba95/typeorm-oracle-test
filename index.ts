@@ -1,12 +1,12 @@
 import "reflect-metadata";
-import {createConnection, getRepository} from "typeorm";
+import {createConnection} from "typeorm";
 import express from "express";
 import * as bodyParser from "body-parser";
 import RadnikRoutes from "./src/routes/RadnikRoutes";
 import SektorRoutes from "./src/routes/SektorRoutes";
 import cors from 'cors';
 
-createConnection().then(async connection => {
+createConnection().then(connection => {
 
     // create express app
     const app = express();
