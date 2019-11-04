@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import './App.css';
 import { Radnik } from './model/Radnik';
 import Header from './components/Header';
@@ -13,100 +13,98 @@ interface State {
   selectedRow: number | null;
   error: string;
 }
-class App extends Component<{}, State> {
 
-  state = {
-    zaposleni: [],
-    sektori: [],
-    selectedRow: null,
-    error: ''
-  }
+function App() {
 
-  async getZaposleni() {
+  let [zaposleni, setZaposleni] = useState<Radnik[]>([]);
+  let [sektori, setSektori] = useState([]);
+  let [selectedRow, setSelectedRow] = useState<number | null>(null);
+  let [error, setError] = useState('');
+
+  const getZaposleni = async () => {
     try {
-      this.setState({zaposleni: await getAllZaposleni()});
+      setZaposleni(await getAllZaposleni());
     } catch (e) {
       console.log(e);
     }
   }
 
-  async getSektori() {
+  const getSektori = async () => {
     try {
-      this.setState({sektori: await getAllSektor()});
+      setSektori(await getAllSektor());
     } catch (e) {
       console.log(e);
     }
   }
 
-  async componentDidMount() {
-    await this.getZaposleni();
-    await this.getSektori();
-  }
+  useEffect(() => {
+    (async function() {
+      await getZaposleni();
+      await getSektori();
+    })();
+  },[]);
 
-  setSelectedRow = (id: number|null) => this.setState({selectedRow: id});
 
-  onAdd = async (zaposleni: Radnik) => {
+  // const setSelectedRow = (id: number|null) => this.setState({selectedRow: id});
+
+  const onAdd = async (radnik: Radnik) => {
     try {
-      let res = await addZaposleni(zaposleni);
-      if(res.error) this.setState({error: res.error});
-      else this.setState({zaposleni: [...this.state.zaposleni, {...res, sektor: res.sektor.id}]});
+      let res = await addZaposleni(radnik);
+      if(res.error) setError(res.error);
+      else setZaposleni([...zaposleni, {...res, sektor: res.sektor.id}]);
     } catch(e) {
-      this.setState({error: "Network error"});
+      setError("Network error");
     }
   }
 
-  onRemove = async () => {
+  const onRemove = async () => {
     try {
-      const radnikId = this.state.selectedRow!;
+      const radnikId = selectedRow!;
       await removeZaposleni(radnikId);
-      this.setState({
-        zaposleni: this.state.zaposleni.filter((zap: Radnik) => zap.id !== radnikId),
-        selectedRow: null
-      });
+      setZaposleni(zaposleni.filter((zap: Radnik) => zap.id !== radnikId));
+      setSelectedRow(null);
     } catch(e) {
-      this.setState({error: "Network error"});
+      setError("Network error");
     }
   }
 
-  onUpdate = async (zaposleni: Radnik) => {
+  const onUpdate = async (radnik: Radnik) => {
     try {
-      let res = await updateZaposleni(zaposleni);
-      if(res.error) this.setState({error: res.error});
-      else this.setState({zaposleni: this.state.zaposleni.map((zap: Radnik) => zap.id === zaposleni.id ? zaposleni : zap)});
+      let res = await updateZaposleni(radnik);
+      if(res.error) setError(res.error);
+      else setZaposleni(zaposleni.map((zap: Radnik) => zap.id === radnik.id ? radnik : zap));
     } catch(e) {
-      this.setState({error: "Network error"});
+      setError("Network error");
     }
   }
 
-  render() {
     return (
       <>
         <Header />
         <div className="container">
           <h1 className="display-4">Zaposleni</h1>
           <div className="row">
-            {this.state.error && <h1>{this.state.error}</h1>}
+            {error && <h1>{error}</h1>}
             <ZaposleniTabela 
-              zaposleni={this.state.zaposleni}
-              sektori={this.state.sektori}
-              selectedRow={this.state.selectedRow}
-              setSelectedRow={this.setSelectedRow}
+              zaposleni={zaposleni}
+              sektori={sektori}
+              selectedRow={selectedRow}
+              setSelectedRow={(id) => setSelectedRow(id)}
             />
           </div>
           <div className="row">
             <ZaposleniForma 
-              sektori={this.state.sektori}
-              zaposleni={this.state.zaposleni}
-              selectedRow={this.state.selectedRow}
-              onAdd={this.onAdd}
-              onUpdate={this.onUpdate}
-              onRemove={this.onRemove}
+              sektori={sektori}
+              zaposleni={zaposleni}
+              selectedRow={selectedRow}
+              onAdd={onAdd}
+              onUpdate={onUpdate}
+              onRemove={onRemove}
             />
           </div>
         </div>
       </>
     );
-  }
 }
 
 export default App;
